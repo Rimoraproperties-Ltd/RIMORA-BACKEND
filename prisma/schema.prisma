@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}
+
+model Agent {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String?  @unique
+  phone     String?
+  bio       String?
+  photoId   Int?
+  photo     Media?   @relation(fields: [photoId], references: [id])
+  properties Property[]
+  createdAt DateTime @default(now())
+}
+
+model Property {
+  id             Int      @id @default(autoincrement())
+  title          String
+  slug           String   @unique
+  description    String?
+  price          Float?
+  currency       String?  @default("USD")
+  address        String?
+  city           String?
+  state          String?
+  country        String?
+  status         String   @default("available")
+  type           String?
+  bedrooms       Int?
+  bathrooms      Int?
+  area_sqm       Float?
+  featuredMediaId Int?
+  featuredMedia  Media?   @relation("FeaturedMedia", fields: [featuredMediaId], references: [id])
+  media          Media[]  @relation("PropertyMedia")
+  agentId        Int?
+  agent          Agent?   @relation(fields: [agentId], references: [id])
+  published      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Media {
+  id        Int      @id @default(autoincrement())
+  filename  String
+  url       String
+  mimeType  String?
+  createdAt DateTime @default(now())
+}
+
+model Inquiry {
+  id        Int      @id @default(autoincrement())
+  propertyId Int?
+  property  Property? @relation(fields: [propertyId], references: [id])
+  name      String
+  email     String
+  phone     String?
+  message   String?
+  createdAt DateTime @default(now())
+}
