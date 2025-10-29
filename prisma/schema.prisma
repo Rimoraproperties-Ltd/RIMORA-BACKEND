@@ -55,11 +55,10 @@ model Property {
 }
 
 model Media {
-  id        Int      @id @default(autoincrement())
-  filename  String
-  url       String
-  mimeType  String?
-  createdAt DateTime @default(now())
+  id          Int       @id @default(autoincrement())
+  url         String
+  property    Property? @relation("PropertyMedia", fields: [propertyId], references: [id])
+  propertyId  Int?
 }
 
 model Inquiry {
